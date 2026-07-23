@@ -30,22 +30,6 @@
             </tr>
         </thead>
         <tbody>
-            <td>1</td>
-            <td>Bintanng</td>
-            <td>willms.rick@example.org</td>
-            <td>admin</td>
-            <td>
-                <a href="" class="btn btn-sm btn-warning">
-                    Edit akun
-                </a>
-
-                <form action="" method="" class="d-inline">
-                    @csrf
-                    @method('DELETE')
-                    <a href="" class="btn btn-sm btn-danger" onclick="return confirm('Yakin hapus user ini?')">
-                        Hapus
-                    </a>
-                </form>
 
             </td>
         </tbody>
