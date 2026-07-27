@@ -1,4 +1,3 @@
-
 @if (!empty($produk->foto))
     <div class="mb-2">
         <label>Foto Saat Ini</label><br>
