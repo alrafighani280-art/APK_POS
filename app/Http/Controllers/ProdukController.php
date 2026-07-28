@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\SearchRequest;
 use App\Http\Requests\Produk\StoreRequest;
 use App\Http\Requests\Produk\UpdateRequest;
+use App\Models\Jenis;
 use App\Models\Produk;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,17 +22,14 @@ class ProdukController extends Controller
 
         $keyword = $request->input('search');
 
-        if ($keyword) {
-            $products = Produk::when($keyword, function ($query) use ($keyword) {
+        // Meload relasi 'jenis' dan 'user' agar query lebih efisien (mencegah N+1 Problem)
+        $products = Produk::with(['jenis', 'user'])
+            ->when($keyword, function ($query) use ($keyword) {
                 $query->where('nama', 'like', "%" . $keyword . "%");
             })
-                ->orderBy('nama')
-                ->paginate(10)
-                ->withQueryString();
-        } else {
-            $products = Produk::latest()->paginate(10)->withQueryString();
-        }
-
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
 
         return view('produk.index', compact('products'));
     }
@@ -43,7 +41,10 @@ class ProdukController extends Controller
     {
         $this->authorize('create', Produk::class);
 
-        return view('produk.create');
+        // Ambil semua data jenis untuk pilihan dropdown di view
+        $jenisList = Jenis::all();
+
+        return view('produk.create', compact('jenisList'));
     }
 
     /**
@@ -55,11 +56,14 @@ class ProdukController extends Controller
 
         $dataReq = $request->validated();
 
-        $data['user_id'] = Auth::id();
-        $data['nama'] = $dataReq['name'];
-        $data['harga_beli'] = $dataReq['purchase_price'];
-        $data['harga_jual'] = $dataReq['selling_price'];
-        $data['stok'] = $dataReq['stock'] ?? true;
+        $data = [
+            'user_id'    => Auth::id(),
+            'jenis_id'   => $dataReq['jenis_id'], // Tambahkan jenis_id di sini
+            'nama'       => $dataReq['name'],
+            'harga_beli' => $dataReq['purchase_price'],
+            'harga_jual' => $dataReq['selling_price'],
+            'stok'       => $dataReq['stock'] ?? 0, // Nilai default 0 jika kosong
+        ];
 
         if ($request->hasFile('foto')) {
             $data['foto'] = $request->file('foto')->store('products', 'public');
@@ -67,15 +71,17 @@ class ProdukController extends Controller
 
         Produk::create($data);
 
-        return redirect()->route('produk.index')->with('success', 'Produk created successfully.');
+        return redirect()->route('produk.index')->with('success', 'Produk berhasil ditambahkan.');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Produk $produk)
     {
-        //
+        $this->authorize('view', $produk);
+
+        return view('produk.show', compact('produk'));
     }
 
     /**
@@ -85,7 +91,10 @@ class ProdukController extends Controller
     {
         $this->authorize('update', $produk);
 
-        return view('produk.edit', compact('produk'));
+        // Ambil data jenis untuk dropdown
+        $jenisList = Jenis::all();
+
+        return view('produk.edit', compact('produk', 'jenisList'));
     }
 
     /**
@@ -99,31 +108,30 @@ class ProdukController extends Controller
 
         $data = [
             'user_id'    => Auth::id(),
+            'jenis_id'   => $dataReq['jenis_id'], // Tambahkan jenis_id di sini
             'nama'       => $dataReq['name'],
             'harga_beli' => $dataReq['purchase_price'],
             'harga_jual' => $dataReq['selling_price'],
-            'stok'       => $dataReq['stock'],
+            'stok'       => $dataReq['stock'] ?? 0,
         ];
 
-        // jika upload foto baru
+        // Jika user meng-upload foto baru
         if ($request->hasFile('foto')) {
 
-            // hapus foto lama jika ada & memang tersimpan
-            if (
-                $produk->foto &&
-                Storage::disk('public')->exists($produk->foto)
-            ) {
+            // Hapus foto lama jika ada
+            if ($produk->foto && Storage::disk('public')->exists($produk->foto)) {
                 Storage::disk('public')->delete($produk->foto);
             }
 
-            // simpan foto baru
+            // Simpan foto baru
             $data['foto'] = $request->file('foto')->store('products', 'public');
         }
 
         $produk->update($data);
 
-        return redirect()->route('produk.edit')
-            ->with('success', 'Produk updated successfully.');
+        // Redirect ke route index (atau edit dengan parameter $produk)
+        return redirect()->route('produk.index')
+            ->with('success', 'Produk berhasil diperbarui.');
     }
 
     /**
@@ -133,10 +141,12 @@ class ProdukController extends Controller
     {
         $this->authorize('delete', $produk);
 
-        if ($produk->foto) {
+        if ($produk->foto && Storage::disk('public')->exists($produk->foto)) {
             Storage::disk('public')->delete($produk->foto);
         }
+
         $produk->delete();
-        return redirect()->route('produk.index')->with('success', 'Product deleted successfully');
+
+        return redirect()->route('produk.index')->with('success', 'Produk berhasil dihapus.');
     }
 }

@@ -11,6 +11,7 @@ class Produk extends Model
     protected $table = 'produk';
     protected $fillable = [
         'user_id',
+        'jenis_id',
         'foto',
         'nama',
         'harga_beli',
@@ -25,5 +26,9 @@ class Produk extends Model
     public function itemPenjualan()
     {
         return $this->hasMany(itemPenjualan::class,'role_id');
+    }
+    public function jenis()
+    {
+        return $this->belongsTo(Jenis::class,'jenis_id');
     }
 }

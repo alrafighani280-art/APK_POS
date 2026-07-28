@@ -61,4 +61,8 @@ class User extends Authenticatable
     {
         return $this->hasMany(Penjualan::class,'user_id');
     }
+    public function jenis()
+    {
+        return $this->hasMany(Jenis::class,'user_id');
+    }
 }

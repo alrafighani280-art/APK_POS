@@ -6,26 +6,22 @@
 
  @include('layouts.navbar')
 
-    {{-- Header Halaman --}}
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3 mt-4">
-        <div>
-            <h2 class="fw-bold text-dark mb-1">Manajemen Users</h2>
-            <p class="text-muted mb-0 small">Kelola data pengguna, hak akses, dan akun sistem.</p>
-        </div>
-        <a href="{{ route('admin.users.create') }}" class="btn btn-primary fw-semibold px-3 py-2 rounded-3 d-inline-flex align-items-center gap-2">
-            <i class="bi bi-plus-lg"></i>
-            <span>Tambah User Baru</span>
-        </a>
+    {{-- Header Halaman (Tanpa tombol tambah) --}}
+    <div class="mb-4 mt-4">
+        <h2 class="fw-bold text-dark mb-1">Manajemen Users</h2>
+        <p class="text-muted mb-0 small">Kelola data pengguna, hak akses, dan akun sistem.</p>
     </div>
 
     {{-- Card Main Content --}}
     <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
         
-        <!-- Header Card: Search Bar -->
+        <!-- Header Card: Search Bar & Tombol Tambah Sejajar -->
         <div class="card-header bg-white border-0 pt-4 px-4 pb-3">
             <form action="{{ route('admin.users') }}" method="GET">
-                <div class="row g-2 align-items-center">
-                    <div class="col-12 col-md-5 col-lg-4">
+                <div class="row g-2 justify-content-between align-items-center">
+                    
+                    <!-- Form Search (Kiri) -->
+                    <div class="col-12 col-md-6 col-lg-4">
                         <div class="input-group">
                             <span class="input-group-text bg-light border-end-0 text-muted ps-3">
                                 <i class="bi bi-search"></i>
@@ -41,6 +37,15 @@
                             <button class="btn btn-primary px-3" type="submit">Cari</button>
                         </div>
                     </div>
+
+                    <!-- Tombol Tambah User (Kanan) -->
+                    <div class="col-12 col-md-auto text-md-end">
+                        <a href="{{ route('admin.users.create') }}" class="btn btn-primary fw-semibold px-3 py-2 rounded-3 d-inline-flex align-items-center gap-2">
+                            <i class="bi bi-plus-lg"></i>
+                            <span>Tambah User Baru</span>
+                        </a>
+                    </div>
+
                 </div>
             </form>
         </div>

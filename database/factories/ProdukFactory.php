@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Models\Produk;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\User;
+use App\Models\Jenis;
 
 /**
  * @extends Factory<Produk>
@@ -21,6 +22,7 @@ class ProdukFactory extends Factory
         $hargaBeli = $this->faker->numberBetween(10_000, 500_000);
         return [
             'user_id' => User::where('role_id',1)->inRandomOrder()->value('id'),
+            'jenis_id' => Jenis::inRandomOrder()->value('id') ?? Jenis::factory(),
             'foto' =>'produk' . $this->faker->uuid . 'jpg',
             'nama' => $this->faker->words(3, true),
             'harga_beli' => $hargaBeli,
