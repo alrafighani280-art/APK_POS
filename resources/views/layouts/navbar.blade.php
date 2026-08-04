@@ -37,6 +37,12 @@
             </a>
             @endif
 
+             <!-- Jenis -->
+            <a href="{{ route('jenis.index') }}" 
+               class="nav-link d-flex align-items-center gap-3 px-3 py-2 rounded-3 {{ Request::is('jenis*') ? 'active bg-danger bg-opacity-10 text-danger fw-semibold' : 'text-secondary' }}">
+                <i class="bi bi-tag fs-5"></i>
+                <span>Jenis</span>
+            </a>
             <!-- Produk -->
             <a href="{{ route('produk.index') }}" 
                class="nav-link d-flex align-items-center gap-3 px-3 py-2 rounded-3 {{ Request::is('produk*') ? 'active bg-danger bg-opacity-10 text-danger fw-semibold' : 'text-secondary' }}">
@@ -49,12 +55,6 @@
                class="nav-link d-flex align-items-center gap-3 px-3 py-2 rounded-3 {{ Request::is('penjualan*') ? 'active bg-danger bg-opacity-10 text-danger fw-semibold' : 'text-secondary' }}">
                 <i class="bi bi-receipt fs-5"></i>
                 <span>Penjualan</span>
-            </a>
-            <!-- Jenis -->
-            <a href="{{ route('jenis.index') }}" 
-               class="nav-link d-flex align-items-center gap-3 px-3 py-2 rounded-3 {{ Request::is('jenis*') ? 'active bg-danger bg-opacity-10 text-danger fw-semibold' : 'text-secondary' }}">
-                <i class="bi bi-tag fs-5"></i>
-                <span>Jenis</span>
             </a>
         </div>
     </div>

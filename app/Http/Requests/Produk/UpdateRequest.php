@@ -25,6 +25,7 @@ class UpdateRequest extends FormRequest
         return [
             'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'name' => 'required|string|max:255',
+            'nama_jenis' => 'required|string|max:255',
             'purchase_price' => 'required|integer|min:0',
             'selling_price' => 'required|integer|min:0',
             'stock' => 'required|integer|min:0',

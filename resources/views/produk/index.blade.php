@@ -70,6 +70,7 @@
                         <tr>
                             <th scope="col" class="ps-4" style="width: 60px;">#</th>
                             <th scope="col" style="width: 80px;">Foto</th>
+                            <th scope="col">Nama Jenis</th>
                             <th scope="col">Nama Produk</th>
                             <th scope="col">User/Inputor</th>
                             <th scope="col">Harga Beli</th>
@@ -101,6 +102,11 @@
                                     @endif
                                 </td>
 
+                                <!-- Nama Jenis -->
+                                <td>
+                                    <span class="small text-muted">
+                                        <i class="bi bi-tags me-1"></i>{{ $product->jenis->nama_jenis ?? '-' }}
+                                    </span>
                                 <!-- Nama Produk -->
                                 <td>
                                     <span class="fw-semibold text-dark mb-0 d-block">{{ $product->nama }}</span>
@@ -144,7 +150,6 @@
                                                class="btn btn-sm btn-outline-warning d-inline-flex align-items-center gap-1 px-2.5 py-1" 
                                                title="Edit Produk">
                                                 <i class="bi bi-pencil-square"></i>
-                                                <span>Edit</span>
                                             </a>
                                         @endcan
 
@@ -157,7 +162,6 @@
                                                         onclick="return confirm('Apakah Anda yakin ingin menghapus produk ini?')"
                                                         title="Hapus Produk">
                                                     <i class="bi bi-trash"></i>
-                                                    <span>Hapus</span>
                                                 </button>
                                             </form>
                                         @endcan

@@ -38,6 +38,20 @@
         </div>
     @enderror
 </div>
+<div>
+   <label>Nama Jenis</label><br>
+    <select name="nama_jenis" class="form-select @error('nama_jenis') is-invalid @enderror">
+        <option value="">-- Pilih Jenis --</option>
+        @foreach ($jenisList as $jenis)
+            <option value="{{ $jenis->id }}" @selected(old('nama_jenis', $produk->jenis_id ?? '') == $jenis->id)>
+                {{ ucfirst($jenis->nama_jenis) }}
+            </option>
+        @endforeach
+    </select>
+        @error('nama_jenis')
+            <div class="invalid-feedback">{{ $message }}</div>
+        @enderror
+</div>
 
 <div>
     <label>Harga Beli</label><br>

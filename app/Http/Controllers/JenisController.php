@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Jenis;
+use App\Http\Requests\UpdateJenisRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -13,17 +14,13 @@ class JenisController extends Controller
      */
     public function index()
     {
-        // Mengambil semua jenis beserta relasi user yang membuatnya
         $jenis = Jenis::with('user')->latest()->get();
+        return view('jenis.index', compact('jenis'));
+    }
 
-        // Jika menggunakan View Blade:
-        // return view('jenis.index', compact('jenis'));
-
-        // Jika berupa API:
-        return response()->json([
-            'success' => true,
-            'data' => $jenis
-        ]);
+    public function create()
+    {
+        return view('jenis.create');
     }
 
     /**
@@ -38,16 +35,14 @@ class JenisController extends Controller
 
         // Simpan ke database
         $jenis = Jenis::create([
-            'user_id'    => Auth::id() ?? $request->user_id, // otomatis ambil ID user yang login
+            'user_id'    => Auth::id() ?? $request->user_id,
             'nama_jenis' => $request->nama_jenis,
         ]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Jenis berhasil ditambahkan!',
-            'data'    => $jenis
-        ], 201);
+        return redirect()->route('jenis.index')->with('success', 'Jenis berhasil ditambahkan.');
     }
+
+
 
     /**
      * Menampilkan detail 1 jenis beserta daftar produk di dalamnya.
@@ -57,44 +52,54 @@ class JenisController extends Controller
         // Load relasi produk dan user
         $jenis->load(['produk', 'user']);
 
-        return response()->json([
-            'success' => true,
-            'data'    => $jenis
-        ]);
+        return view('jenis.show', compact('jenis'));
     }
+
+    public function edit(Jenis $jenis)
+    {
+        $this->authorize('update', $jenis);
+
+        // Ambil data jenis untuk dropdown
+        $jenisList = Jenis::all();
+
+        return view('jenis.edit', compact('jenis', 'jenisList'));
+    }
+
 
     /**
      * Mengubah data jenis.
      */
-    public function update(Request $request, Jenis $jenis)
+    public function update(UpdateJenisRequest $request, Jenis $jenis)
     {
-        // Validasi input
-        $request->validate([
-            'nama_jenis' => 'required|string|max:255',
-        ]);
+        $this->authorize('update', $jenis);
 
-        // Update data
-        $jenis->update([
-            'nama_jenis' => $request->nama_jenis,
-        ]);
+        $dataReq = $request->validated();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Jenis berhasil diperbarui!',
-            'data'    => $jenis
-        ]);
+        $data = [
+            'user_id'    => Auth::id(),
+            'nama_jenis' => $dataReq['nama_jenis'],
+        ];
+
+        $jenis->update($data);
+
+        // Redirect ke route index (atau edit dengan parameter $produk)
+        return redirect()->route('jenis.index')
+            ->with('success', 'Jenis berhasil diperbarui.');
     }
 
     /**
      * Menghapus jenis dari database.
      */
-    public function destroy(Jenis $jenis)
+     public function destroy(Jenis $jenis)
     {
+        $this->authorize('delete', $jenis);
+
+        if ($jenis->foto && Storage::disk('public')->exists($jenis->foto)) {
+            Storage::disk('public')->delete($jenis->foto);
+        }
+
         $jenis->delete();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Jenis berhasil dihapus!'
-        ]);
+        return redirect()->route('jenis.index')->with('success', 'Jenis berhasil dihapus.');
     }
 }

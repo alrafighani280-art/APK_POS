@@ -39,11 +39,7 @@ class ProdukController extends Controller
      */
     public function create()
     {
-        $this->authorize('create', Produk::class);
-
-        // Ambil semua data jenis untuk pilihan dropdown di view
         $jenisList = Jenis::all();
-
         return view('produk.create', compact('jenisList'));
     }
 
@@ -58,11 +54,11 @@ class ProdukController extends Controller
 
         $data = [
             'user_id'    => Auth::id(),
-            'jenis_id'   => $dataReq['jenis_id'], // Tambahkan jenis_id di sini
+            'jenis_id'   => $dataReq['nama_jenis'], // Pastikan ini sesuai dengan field yang ada di form
             'nama'       => $dataReq['name'],
             'harga_beli' => $dataReq['purchase_price'],
             'harga_jual' => $dataReq['selling_price'],
-            'stok'       => $dataReq['stock'] ?? 0, // Nilai default 0 jika kosong
+            'stok'       => $dataReq['stock'] ?? 0,
         ];
 
         if ($request->hasFile('foto')) {
@@ -108,7 +104,7 @@ class ProdukController extends Controller
 
         $data = [
             'user_id'    => Auth::id(),
-            'jenis_id'   => $dataReq['jenis_id'], // Tambahkan jenis_id di sini
+            'jenis_id'   => $dataReq['nama_jenis'],
             'nama'       => $dataReq['name'],
             'harga_beli' => $dataReq['purchase_price'],
             'harga_jual' => $dataReq['selling_price'],
