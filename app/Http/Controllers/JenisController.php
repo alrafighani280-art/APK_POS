@@ -94,10 +94,6 @@ class JenisController extends Controller
     {
         $this->authorize('delete', $jenis);
 
-        if ($jenis->foto && Storage::disk('public')->exists($jenis->foto)) {
-            Storage::disk('public')->delete($jenis->foto);
-        }
-
         $jenis->delete();
 
         return redirect()->route('jenis.index')->with('success', 'Jenis berhasil dihapus.');

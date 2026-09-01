@@ -27,3 +27,55 @@ body {
         letter-spacing: 0.5px;
         color: #6c757d;
     }
+     /* ===== Topbar khusus mobile ===== */
+    .topbar-mobile {
+        display: none;
+    }
+
+    /* ===== Sidebar default (mobile: tersembunyi di luar layar) ===== */
+    .sidebar-desktop {
+        width: 260px;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        z-index: 1045;
+    }
+
+    .sidebar-desktop.show {
+        transform: translateX(0);
+    }
+
+    /* ===== Overlay saat sidebar mobile terbuka ===== */
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1040;
+    }
+
+    .sidebar-overlay.show {
+        display: block;
+    }
+
+    /* ===== Desktop: sidebar selalu terlihat, konten digeser ===== */
+    @media (min-width: 992px) {
+        body {
+            padding-left: 260px;
+        }
+        .sidebar-desktop {
+            transform: translateX(0);
+        }
+        .topbar-mobile {
+            display: none !important;
+        }
+    }
+
+    /* ===== Mobile: tampilkan topbar dengan tombol hamburger ===== */
+    @media (max-width: 991.98px) {
+        .topbar-mobile {
+            display: flex;
+        }
+        body {
+            padding-top: 56px;
+        }
+    }

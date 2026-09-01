@@ -1,17 +1,22 @@
-<style>
-    /* Menggeser konten utama ke kanan agar tidak tertutup sidebar */
-    @media (min-width: 992px) {
-        body {
-            padding-left: 260px;
-        }
-        .sidebar-desktop {
-            width: 260px;
-        }
-    }
-</style>
+<link rel="stylesheet" href="{{ asset('assets/css/style.css')}}">
+
+<!-- Topbar Mobile (hanya muncul di layar < 992px) -->
+<div class="topbar-mobile position-fixed top-0 start-0 end-0 bg-white border-bottom shadow-sm align-items-center justify-content-between px-3 z-3" style="height: 56px;">
+    <button class="btn btn-outline-secondary btn-sm" type="button" id="sidebarToggleBtn">
+        <i class="bi bi-list fs-5"></i>
+    </button>
+    <a href="{{ route('dashboard') }}" class="d-flex align-items-center gap-2 text-decoration-none text-dark fw-bold fs-5">
+        <i class="bi bi-shop text-primary fs-4"></i>
+        <span>POS</span>
+    </a>
+    <div style="width: 38px;"></div> <!-- spacer biar judul center -->
+</div>
+
+<!-- Overlay (mobile) -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
 
 <!-- Sidebar Navigasi -->
-<div class="sidebar-desktop position-fixed top-0 bottom-0 start-0 bg-white border-end shadow-sm d-flex flex-column justify-content-between p-3 z-3">
+<div class="sidebar-desktop position-fixed top-0 bottom-0 start-0 bg-white border-end shadow-sm d-flex flex-column justify-content-between p-3" id="sidebarNav">
     <div>
         <!-- Brand Logo / Title -->
         <a href="{{ route('dashboard') }}" class="d-flex align-items-center gap-2 text-decoration-none text-dark fw-bold fs-5 mb-4 px-2">
@@ -35,7 +40,6 @@
                 <i class="bi bi-people fs-5"></i>
                 <span>Users</span>
             </a>
-            @endif
 
              <!-- Jenis -->
             <a href="{{ route('jenis.index') }}" 
@@ -43,6 +47,8 @@
                 <i class="bi bi-tag fs-5"></i>
                 <span>Jenis</span>
             </a>
+            @endif
+
             <!-- Produk -->
             <a href="{{ route('produk.index') }}" 
                class="nav-link d-flex align-items-center gap-3 px-3 py-2 rounded-3 {{ Request::is('produk*') ? 'active bg-danger bg-opacity-10 text-danger fw-semibold' : 'text-secondary' }}">
@@ -56,7 +62,7 @@
                 <i class="bi bi-receipt fs-5"></i>
                 <span>Penjualan</span>
             </a>
-        </div>
+        </div> 
     </div>
 
     <!-- User Profile & Logout Box (Bagian Bawah) -->
@@ -82,3 +88,39 @@
         </form>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const sidebar = document.getElementById('sidebarNav');
+    const overlay = document.getElementById('sidebarOverlay');
+    const toggleBtn = document.getElementById('sidebarToggleBtn');
+
+    function openSidebar() {
+        sidebar.classList.add('show');
+        overlay.classList.add('show');
+    }
+
+    function closeSidebar() {
+        sidebar.classList.remove('show');
+        overlay.classList.remove('show');
+    }
+
+    toggleBtn.addEventListener('click', function () {
+        sidebar.classList.contains('show') ? closeSidebar() : openSidebar();
+    });
+
+    overlay.addEventListener('click', closeSidebar);
+
+    // Tutup otomatis saat link menu diklik (khusus mobile)
+    sidebar.querySelectorAll('a.nav-link').forEach(function (link) {
+        link.addEventListener('click', function () {
+            if (window.innerWidth < 992) closeSidebar();
+        });
+    });
+
+    // Reset state saat resize ke desktop
+    window.addEventListener('resize', function () {
+        if (window.innerWidth >= 992) closeSidebar();
+    });
+});
+</script>

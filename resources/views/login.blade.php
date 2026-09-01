@@ -38,17 +38,22 @@
                 <!-- Password Input -->
                 <div class="mb-4">
                     <label for="password" class="form-label small fw-semibold text-secondary">Password</label>
-                    <input type="password" 
-                           name="password" 
-                           class="form-control form-control-lg @error('password') is-invalid @enderror" 
-                           id="password" 
-                           placeholder="••••••••"
-                           required>
-                    @error('password')
-                        <div class="invalid-feedback">
-                            {{ $message }}
-                        </div>
-                    @enderror
+                    <div class="input-group">
+                        <input type="password" 
+                               name="password" 
+                               class="form-control form-control-lg border-end-0 @error('password') is-invalid @enderror" 
+                               id="password" 
+                               placeholder="••••••••"
+                               required>
+                        <button class="input-group-text bg-white border-start-0 rounded-end-3" type="button" id="togglePassword" style="cursor: pointer;">
+                            <i class="bi bi-eye text-dark" id="toggleIcon"></i>
+                        </button>
+                        @error('password')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
                 </div>
 
                 <!-- Submit Button -->
@@ -59,4 +64,21 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.getElementById('togglePassword').addEventListener('click', function () {
+        const passwordInput = document.getElementById('password');
+        const toggleIcon = document.getElementById('toggleIcon');
+        
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            toggleIcon.classList.remove('bi-eye');
+            toggleIcon.classList.add('bi-eye-slash');
+        } else {
+            passwordInput.type = 'password';
+            toggleIcon.classList.remove('bi-eye-slash');
+            toggleIcon.classList.add('bi-eye');
+        }
+    });
+</script>
 @endsection

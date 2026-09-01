@@ -22,7 +22,7 @@ class UserController extends Controller
         $keyword = $request->input('search');
 
         if ($keyword) {
-            $users = User::whereRaw("MATCH(name, email) AGAINST(? IN BOOLEAN MODE)", [$keyword])
+            $users = User::whereRaw("MATCH(name, email) AGAINST(? IN BOOLEAN MODE)", [$keyword . '*'])
                 ->paginate(10)
                 ->withQueryString();
         } else {
