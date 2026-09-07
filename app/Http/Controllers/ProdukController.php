@@ -16,16 +16,22 @@ class ProdukController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(SearchRequest $request)
+   public function index(SearchRequest $request)
     {
         $this->authorize('viewAny', Produk::class);
 
         $keyword = $request->input('search');
 
-        // Meload relasi 'jenis' dan 'user' agar query lebih efisien (mencegah N+1 Problem)
         $products = Produk::with(['jenis', 'user'])
             ->when($keyword, function ($query) use ($keyword) {
-                $query->where('nama', 'like', "%" . $keyword . "%");
+                $query->where(function ($q) use ($keyword) {
+                    // 1. Cari berdasarkan nama produk
+                    $q->where('nama', 'like', "%" . $keyword . "%")
+                    // 2. Cari berdasarkan kolom 'nama_jenis' di tabel jenis
+                    ->orWhereHas('jenis', function ($qJenis) use ($keyword) {
+                        $qJenis->where('nama_jenis', 'like', "%" . $keyword . "%");
+                    });
+                });
             })
             ->latest()
             ->paginate(10)
