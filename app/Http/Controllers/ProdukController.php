@@ -120,18 +120,33 @@ class ProdukController extends Controller
         // Jika user meng-upload foto baru
         if ($request->hasFile('foto')) {
 
-            // Hapus foto lama jika ada
+            // 1. Hapus foto lama jika ada
             if ($produk->foto && Storage::disk('public')->exists($produk->foto)) {
                 Storage::disk('public')->delete($produk->foto);
             }
 
-            // Simpan foto baru
-            $data['foto'] = $request->file('foto')->store('products', 'public');
+            // 2. Olah foto baru agar mendekati/di bawah 50 KB
+            $file = $request->file('foto');
+            
+            // Buat nama unik file (disarankan format .webp untuk kompresi maksimal)
+            $filename = 'products/' . Str::random(20) . '.webp';
+
+            // Baca gambar dan resize dimensinya (misal max lebar 800px)
+            // Menurunkan resolusi adalah kunci utama memangkas ukuran file ke 50 KB
+            $img = Image::read($file); // Jika v2 gunakan Image::make($file)
+            $img->scale(width: 800);   // Mengubah ukuran proporsional (max width 800px)
+
+            // Encode ke format WEBP dengan kualitas 50-60% untuk target ~50 KB
+            $compressedContent = $img->toWebp(quality: 55); 
+
+            // 3. Simpan ke Storage Public
+            Storage::disk('public')->put($filename, $compressedContent);
+
+            $data['foto'] = $filename;
         }
 
         $produk->update($data);
 
-        // Redirect ke route index (atau edit dengan parameter $produk)
         return redirect()->route('produk.index')
             ->with('success', 'Produk berhasil diperbarui.');
     }

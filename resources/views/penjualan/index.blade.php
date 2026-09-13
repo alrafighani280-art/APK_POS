@@ -152,10 +152,15 @@
 
                                 <!-- Metode Pembayaran -->
                                 <td>
-                                    <span class="badge bg-light text-dark border px-2.5 py-1.5 fw-semibold text-uppercase">
-                                        <i class="bi bi-credit-card me-1 text-muted"></i>
-                                        {{ $sale->metode_pembayaran ?? 'Cash' }}
-                                    </span>
+                                    @if($sale->metode_pembayaran)
+                                        <span class="badge bg-white text-dark border px-3 py-1">
+                                            <i class="bi bi-credit-card me-1"></i> {{ $sale->metode_pembayaran }}
+                                        </span>
+                                    @else
+                                        <span class="badge bg-light text-muted border px-3 py-1">
+                                            <i class="bi bi-hourglass-split me-1"></i> Belum Dipilih
+                                        </span>
+                                    @endif
                                 </td>
 
                                 <!-- Status -->

@@ -102,16 +102,46 @@
                     {{-- Summary & Pembayaran --}}
                     <div class="row justify-content-end w-100 m-0">
                             <div class="bg-light rounded-3 p-3 border">
-                                
-                                <!-- Baris 1: Metode Pembayaran -->
                                 <div class="d-flex justify-content-between align-items-center mb-2 small">
                                     <span class="text-muted">Metode Pembayaran:</span>
-                                    <span class="fw-bold text-uppercase badge bg-dark text-white px-2 py-1">
-                                        {{ $sale->metode_pembayaran ?? $sale->payment_method ?? 'CASH' }}
+                                    @if($sale->metode_pembayaran)
+                                        <span class="fw-bold text-uppercase badge bg-dark text-white px-2 py-1">
+                                            {{ $sale->metode_pembayaran }}
+                                        </span>
+                                    @else
+                                        <span class="fw-bold text-uppercase badge bg-secondary bg-opacity-50 text-white px-2 py-1">
+                                            Belum Dipilih
+                                        </span>
+                                    @endif
+                                </div>
+
+                                {{-- ambahan: tampilkan barcode QRIS sesuai kondisi status --}}
+                                @if($qrImage)
+                                <hr class="my-2 text-muted opacity-25">
+                                <div class="text-center py-2">
+                                    <span class="d-block text-muted small fw-bold text-uppercase mb-2">
+                                        {{ $sale->status === 'OPEN' ? '(Transaksi Belum Selesai)' : 'Bukti Pembayaran QRIS' }}
+                                    </span>
+                                    <img src="data:image/png;base64,{{ $qrImage }}" alt="QRIS"
+                                        class="img-fluid border rounded mx-auto d-block" style="max-width:200px;">
+                                </div>
+                                @endif
+
+                                <hr class="my-2 text-muted opacity-25">
+
+                                <div class="d-flex justify-content-between align-items-center small mb-1">
+                                    <span class="text-muted">Uang Dibayar:</span>
+                                    <span class="fw-semibold text-dark">
+                                        Rp {{ number_format($sale->uang_bayar ?? 0, 0, ',', '.') }}
                                     </span>
                                 </div>
-                                
-                                <hr class="my-2 text-muted opacity-25">
+
+                                <div class="d-flex justify-content-between align-items-center small">
+                                    <span class="text-muted">Kembalian:</span>
+                                    <span class="fw-semibold text-dark">
+                                        Rp {{ number_format($sale->uang_kembali ?? 0, 0, ',', '.') }}
+                                    </span>
+                                </div>
 
                                 <!-- Baris 2: Total Pembayaran (Kiri vs Kanan) -->
                                 <div class="d-flex justify-content-between align-items-center">

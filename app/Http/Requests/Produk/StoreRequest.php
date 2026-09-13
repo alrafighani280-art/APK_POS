@@ -22,7 +22,7 @@ class StoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+           'foto' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'name' => 'required|string|max:255',
             'nama_jenis' => 'required|exists:jenis,id',
             'purchase_price' => 'required|integer|min:0',

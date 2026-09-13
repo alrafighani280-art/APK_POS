@@ -34,7 +34,6 @@
                             <input type="hidden" name="product_id" value="{{ $product->id }}">
 
                             <div class="col-7">
-                                {{-- ✅ Hapus tanda " yang nyasar --}}
                                 <button type="button"
                                     class="btn btn-outline-primary w-100 text-start p-2 {{ $sale->status === 'COMPLETED' ? 'disabled' : '' }}">
                                     <div class="d-flex align-items-center gap-2">
@@ -107,7 +106,7 @@
                     </tbody>
                 </table>
 
-                <div class="card-footer">
+               <div class="card-footer">
                     <strong>Rp {{ number_format($sale->total_pembayaran) }}</strong>
 
                     <form method="POST" action="{{ route('penjualan.update', $sale->id) }}"
@@ -115,16 +114,35 @@
                         @csrf
                         @method('PUT')
 
-                        <select name="payment_method" class="form-select mb-2">
-                            <option value="">Pilih Pembayaran</option>
-                            <option value="CASH">Cash</option>
-                            <option value="QRIS">QRIS</option>
+                        <select name="payment_method" id="payment_method" class="form-select mb-2" onchange="toggleQris()">
+                            <option value="" {{ !$sale->metode_pembayaran ? 'selected' : '' }}>Pilih Pembayaran</option>
+                            <option value="CASH" {{ $sale->metode_pembayaran === 'CASH' ? 'selected' : '' }}>Cash</option>
+                            <option value="QRIS" {{ $sale->metode_pembayaran === 'QRIS' ? 'selected' : '' }}>QRIS</option>
                         </select>
 
-                        <button class="btn btn-success w-100 {{ $sale->status === 'COMPLETED' ? 'disabled' : '' }}">
+                        <div id="qris-box" class="mb-2 text-center qris-hidden">
+                            @if($qrImage)
+                                <img src="data:image/png;base64,{{ $qrImage }}" alt="QRIS"
+                                    class="img-fluid border rounded mx-auto d-block" style="max-width:200px;">
+                            @endif
+                            <div class="small text-muted mt-1">
+                                Scan QRIS untuk membayar Rp {{ number_format($sale->total_pembayaran) }}
+                            </div>
+                        </div>
+
+                        <input type="number" name="uang_bayar" id="uang_bayar" class="form-control mb-2"
+                            placeholder="Uang Dibayar" min="{{ $sale->total_pembayaran }}"
+                            oninput="hitungKembalian()" required>
+
+                        <div class="mb-2 fw-semibold" id="kembalian_info">
+                            Kembalian: Rp 0
+                        </div>
+
+                        <button type="submit" id="btn-checkout" class="btn btn-success w-100 {{ $sale->status === 'COMPLETED' ? 'disabled' : '' }}" disabled>
                             Checkout
                         </button>
                     </form>
+
                     @can('delete', $sale)
                     <form action="{{ route('penjualan.destroy', $sale->id) }}" method="POST"
                         onsubmit="return confirm('Yakin ingin membatalkan transaksi?')">
@@ -142,5 +160,49 @@
         </div>
 
     </div>
+<script>
+    function hitungKembalian() {
+        const total = {{ $sale->total_pembayaran }};
+        const bayar = parseInt(document.getElementById('uang_bayar').value) || 0;
+        const selisih = bayar - total;
+        const info = document.getElementById('kembalian_info');
+        const btnCheckout = document.getElementById('btn-checkout');
 
+        if (bayar === 0) {
+            info.innerText = 'Kembalian: Rp 0';
+            info.className = 'mb-2 fw-semibold text-muted';
+            btnCheckout.disabled = true;
+        } else if (selisih < 0) {
+            info.innerText = 'Uang kurang Rp ' + Math.abs(selisih).toLocaleString('id-ID');
+            info.className = 'mb-2 fw-semibold text-danger';
+            btnCheckout.disabled = true;
+        } else {
+            info.innerText = 'Kembalian: Rp ' + selisih.toLocaleString('id-ID');
+            info.className = 'mb-2 fw-semibold text-success';
+            btnCheckout.disabled = false;
+        }
+    }
+
+   function toggleQris() {
+        const method = document.getElementById('payment_method').value;
+        const qrisBox = document.getElementById('qris-box');
+        const uangBayarInput = document.getElementById('uang_bayar');
+        const total = {{ $sale->total_pembayaran }};
+
+        if (method === 'QRIS') {
+            qrisBox.classList.remove('qris-hidden');
+            uangBayarInput.value = total;
+            uangBayarInput.readOnly = true;
+        } else {
+            qrisBox.classList.add('qris-hidden');
+            uangBayarInput.readOnly = false;
+            uangBayarInput.value = '';
+        }
+        hitungKembalian();
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        toggleQris();
+    });
+</script>
 @endsection

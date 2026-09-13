@@ -6,6 +6,9 @@ use App\Http\Requests\SearchRequest;
 use App\Models\Penjualan;
 use App\Models\Produk;
 use Illuminate\Http\Request;
+use App\Services\QrisHelper;
+use Endroid\QrCode\QrCode;
+use Endroid\QrCode\Writer\PngWriter;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -50,7 +53,6 @@ class PenjualanController extends Controller
             ],
             [
                 'total_pembayaran' => 0,
-                'metode_pembayaran' => 'CASH'
             ]
         );
 
@@ -68,7 +70,18 @@ class PenjualanController extends Controller
 
         $mode = 'create';
 
-        return view('penjualan.pos', compact('sale', 'products', 'mode'));
+        // Generate QRIS dinamis sesuai total keranjang saat ini
+        $total = (int) $sale->itemPenjualan()->sum('subtotal');
+        $qrImage = null;
+
+        if ($total > 0) {
+            $qrisString = QrisHelper::generateDynamicQris(env('QRIS_STATIC_STRING'), $total);
+            $qrCode = new QrCode($qrisString);
+            $writer = new PngWriter();
+            $qrImage = base64_encode($writer->write($qrCode)->getString());
+        }
+
+        return view('penjualan.pos', compact('sale', 'products', 'mode', 'qrImage'));
     }
 
     /**
@@ -86,9 +99,28 @@ class PenjualanController extends Controller
     {
         $sale = Penjualan::with(['user', 'itemPenjualan.produk'])->findOrFail($id);
 
-        return view('penjualan.show', compact('sale'));
-    }
+        $qrImage = null;
 
+        if ($sale->status === 'COMPLETED') {
+            // Sudah selesai: QR hanya ditampilkan kalau memang dibayar via QRIS
+            if ($sale->metode_pembayaran === 'QRIS' && $sale->qris_payload) {
+                $qrCode = new QrCode($sale->qris_payload);
+                $writer = new PngWriter();
+                $qrImage = base64_encode($writer->write($qrCode)->getString());
+            }
+        } else {
+            // Masih OPEN: selalu generate QR dinamis dari total saat ini
+            $total = (int) $sale->itemPenjualan()->sum('subtotal');
+            if ($total > 0) {
+                $qrisString = QrisHelper::generateDynamicQris(env('QRIS_STATIC_STRING'), $total);
+                $qrCode = new QrCode($qrisString);
+                $writer = new PngWriter();
+                $qrImage = base64_encode($writer->write($qrCode)->getString());
+            }
+        }
+
+        return view('penjualan.show', compact('sale', 'qrImage'));
+    }
     /**
      * Show the form for editing the specified resource.
      */
@@ -104,7 +136,18 @@ class PenjualanController extends Controller
 
         $mode = 'edit';
 
-        return view('penjualan.pos', compact('sale', 'products', 'mode'));
+        // 🔽 Generate QRIS dinamis juga saat mode edit
+        $total = (int) $sale->itemPenjualan()->sum('subtotal');
+        $qrImage = null;
+
+        if ($total > 0) {
+            $qrisString = QrisHelper::generateDynamicQris(env('QRIS_STATIC_STRING'), $total);
+            $qrCode = new QrCode($qrisString);
+            $writer = new PngWriter();
+            $qrImage = base64_encode($writer->write($qrCode)->getString());
+        }
+
+        return view('penjualan.pos', compact('sale', 'products', 'mode', 'qrImage'));
     }
 
     /**
@@ -113,7 +156,8 @@ class PenjualanController extends Controller
     public function update(Request $request, Penjualan $penjualan)
     {
         $request->validate([
-            'payment_method' => 'required|in:CASH,QRIS'
+            'payment_method' => 'required|in:CASH,QRIS',
+            'uang_bayar' => 'required|numeric|min:0',
         ]);
 
         if ($penjualan->status !== 'OPEN') {
@@ -124,20 +168,35 @@ class PenjualanController extends Controller
             return back()->with('errors', 'Keranjang masih kosong');
         }
 
-        DB::transaction(function () use ($penjualan, $request) {
+        // 🔄 Hitung ulang total (anti manipulasi)
+        $total = $penjualan->itemPenjualan()->sum('subtotal');
+        $uangBayar = (int) $request->uang_bayar;
 
-            // 🔄 Hitung ulang total (anti manipulasi)
-            $total = $penjualan->itemPenjualan()->sum('subtotal');
+        if ($uangBayar < $total) {
+            return back()->with('errors', 'Uang bayar tidak boleh kurang dari total pembayaran')->withInput();
+        }
 
+        $uangKembali = $uangBayar - $total;
+
+        // 🔽 Simpan payload QRIS kalau metode bayarnya QRIS
+        $qrisPayload = null;
+        if ($request->payment_method === 'QRIS') {
+            $qrisPayload = QrisHelper::generateDynamicQris(env('QRIS_STATIC_STRING'), $total);
+        }
+
+        DB::transaction(function () use ($penjualan, $request, $total, $uangBayar, $uangKembali, $qrisPayload) {
             $penjualan->update([
                 'metode_pembayaran' => $request->payment_method,
                 'total_pembayaran' => $total,
+                'uang_bayar' => $uangBayar,
+                'uang_kembali' => $uangKembali,
+                'qris_payload' => $qrisPayload,
                 'status' => 'COMPLETED'
             ]);
         });
 
         return redirect()
-            ->route('penjualan.index')
+            ->route('penjualan.show', $penjualan->id)
             ->with('success', 'Transaksi berhasil diselesaikan');
     }
 

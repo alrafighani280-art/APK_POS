@@ -79,3 +79,6 @@ body {
             padding-top: 56px;
         }
     }
+    .qris-hidden {
+        display: none !important;
+    }

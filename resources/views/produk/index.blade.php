@@ -73,7 +73,7 @@
                             <th scope="col">Nama Jenis</th>
                             <th scope="col">Nama Produk</th>
                             <th scope="col">User/Inputor</th>
-                            <th scope="col">Harga Beli</th>
+                            <th scope="col">Harga Pokok</th>
                             <th scope="col">Harga Jual</th>
                             <th scope="col">Stok</th>
                             <th scope="col" class="text-end pe-4" style="width: 180px;">Aksi</th>
