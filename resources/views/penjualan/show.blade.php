@@ -115,12 +115,12 @@
                                     @endif
                                 </div>
 
-                                {{-- ambahan: tampilkan barcode QRIS sesuai kondisi status --}}
-                                @if($qrImage)
+                               {{-- QRIS hanya ditampilkan jika ada $qrImage dan status BUKAN Completed/Selesai/Lunas --}}
+                                @if($qrImage && !in_array(strtolower($sale->status ?? ''), ['completed', 'selesai', 'lunas']))
                                 <hr class="my-2 text-muted opacity-25">
                                 <div class="text-center py-2">
                                     <span class="d-block text-muted small fw-bold text-uppercase mb-2">
-                                        {{ $sale->status === 'OPEN' ? '(Transaksi Belum Selesai)' : 'Bukti Pembayaran QRIS' }}
+                                        (Transaksi Belum Selesai)
                                     </span>
                                     <img src="data:image/png;base64,{{ $qrImage }}" alt="QRIS"
                                         class="img-fluid border rounded mx-auto d-block" style="max-width:200px;">
