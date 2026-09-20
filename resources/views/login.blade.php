@@ -130,15 +130,9 @@
 <div class="login-wrapper">
     <div class="d-flex flex-column align-items-center w-100">
         
-        <div class="mb-3 text-center">
-            <a href="{{ url('/') }}" class="btn-back-landing d-inline-flex align-items-center gap-2">
-                <i class="bi bi-arrow-left"></i> Kembali ke Halaman Utama
-            </a>
-        </div>
-
         <div class="card login-card p-4">
             <div class="card-body p-2">
-                <div class="text-center mb-4">
+                <div class="text-center mb-4">````
                     <div class="login-brand-icon mb-3">
                         <i class="bi bi-basket2-fill fs-3"></i>
                     </div>

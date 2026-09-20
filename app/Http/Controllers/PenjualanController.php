@@ -29,8 +29,15 @@ class PenjualanController extends Controller
             })
 
             ->when($keyword, function ($query) use ($keyword) {
-                $query->whereHas('user', function ($q) use ($keyword) {
-                    $q->where('name', 'like', '%' . $keyword . '%');
+                $query->where(function ($subQuery) use ($keyword) {
+                    // Cari berdasarkan nama kasir (User)
+                    $subQuery->whereHas('user', function ($qUser) use ($keyword) {
+                        $qUser->where('name', 'like', '%' . $keyword . '%');
+                    })
+                    // Atau cari berdasarkan nama produk (ItemPenjualan -> Produk)
+                    ->orWhereHas('itemPenjualan.produk', function ($qProduk) use ($keyword) {
+                        $qProduk->where('nama', 'like', '%' . $keyword . '%');
+                    });
                 });
             })
 
@@ -40,7 +47,6 @@ class PenjualanController extends Controller
 
         return view('penjualan.index', compact('sales'));
     }
-
     /**
      * Show the form for creating a new resource.
      */
