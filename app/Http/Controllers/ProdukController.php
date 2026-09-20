@@ -16,7 +16,7 @@ class ProdukController extends Controller
     /**
      * Display a listing of the resource.
      */
-   public function index(SearchRequest $request)
+    public function index(SearchRequest $request)
     {
         $this->authorize('viewAny', Produk::class);
 
@@ -60,7 +60,7 @@ class ProdukController extends Controller
 
         $data = [
             'user_id'    => Auth::id(),
-            'jenis_id'   => $dataReq['nama_jenis'], // Pastikan ini sesuai dengan field yang ada di form
+            'jenis_id'   => $dataReq['nama_jenis'],
             'nama'       => $dataReq['name'],
             'harga_beli' => $dataReq['purchase_price'],
             'harga_jual' => $dataReq['selling_price'],
@@ -120,29 +120,13 @@ class ProdukController extends Controller
         // Jika user meng-upload foto baru
         if ($request->hasFile('foto')) {
 
-            // 1. Hapus foto lama jika ada
+            // 1. Hapus foto lama dari storage jika ada
             if ($produk->foto && Storage::disk('public')->exists($produk->foto)) {
                 Storage::disk('public')->delete($produk->foto);
             }
 
-            // 2. Olah foto baru agar mendekati/di bawah 50 KB
-            $file = $request->file('foto');
-            
-            // Buat nama unik file (disarankan format .webp untuk kompresi maksimal)
-            $filename = 'products/' . Str::random(20) . '.webp';
-
-            // Baca gambar dan resize dimensinya (misal max lebar 800px)
-            // Menurunkan resolusi adalah kunci utama memangkas ukuran file ke 50 KB
-            $img = Image::read($file); // Jika v2 gunakan Image::make($file)
-            $img->scale(width: 800);   // Mengubah ukuran proporsional (max width 800px)
-
-            // Encode ke format WEBP dengan kualitas 50-60% untuk target ~50 KB
-            $compressedContent = $img->toWebp(quality: 55); 
-
-            // 3. Simpan ke Storage Public
-            Storage::disk('public')->put($filename, $compressedContent);
-
-            $data['foto'] = $filename;
+            // 2. Simpan foto baru menggunakan fitur native Laravel (tanpa library eksternal)
+            $data['foto'] = $request->file('foto')->store('products', 'public');
         }
 
         $produk->update($data);

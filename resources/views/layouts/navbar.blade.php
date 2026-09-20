@@ -7,7 +7,7 @@
     </button>
     <a href="{{ route('dashboard') }}" class="d-flex align-items-center gap-2 text-decoration-none text-dark fw-bold fs-5">
         <i class="bi bi-shop text-primary fs-4"></i>
-        <span>POS</span>
+        <span>BAROKAH UTAMA</span>
     </a>
     <div style="width: 38px;"></div> <!-- spacer biar judul center -->
 </div>
@@ -21,7 +21,7 @@
         <!-- Brand Logo / Title -->
         <a href="{{ route('dashboard') }}" class="d-flex align-items-center gap-2 text-decoration-none text-dark fw-bold fs-5 mb-4 px-2">
             <i class="bi bi-shop text-primary fs-4"></i>
-            <span>POS</span>
+            <span>BAROKAH UTAMA</span>
         </a>
 
         <!-- Menu Links -->
@@ -30,7 +30,7 @@
             <a href="{{ route('dashboard') }}" 
                class="nav-link d-flex align-items-center gap-3 px-3 py-2 rounded-3 {{ Request::is('dashboard*') ? 'active bg-danger bg-opacity-10 text-danger fw-semibold' : 'text-secondary' }}">
                 <i class="bi bi-grid-1x2 fs-5"></i>
-                <span>Dashboard</span>
+                <span>Beranda</span>
             </a>
 
             <!-- Users (Khusus Admin) -->
@@ -38,7 +38,7 @@
             <a href="{{ route('admin.users') }}" 
                class="nav-link d-flex align-items-center gap-3 px-3 py-2 rounded-3 {{ Request::is('admin/users*') ? 'active bg-danger bg-opacity-10 text-danger fw-semibold' : 'text-secondary' }}">
                 <i class="bi bi-people fs-5"></i>
-                <span>Users</span>
+                <span>Pengguna</span>
             </a>
 
              <!-- Jenis -->
@@ -79,13 +79,35 @@
             </div>
         </div>
 
-        <form action="{{ route('logout') }}" method="POST">
+        <form action="{{ route('logout') }}" method="POST" id="logoutForm">
             @csrf
-            <button type="submit" class="btn btn-outline-danger btn-sm w-100 d-flex align-items-center justify-content-center gap-2 py-2 rounded-3">
+            <button type="button" class="btn btn-outline-danger btn-sm w-100 d-flex align-items-center justify-content-center gap-2 py-2 rounded-3" data-bs-toggle="modal" data-bs-target="#logoutModal">
                 <i class="bi bi-box-arrow-right"></i>
                 <span>Logout</span>
             </button>
         </form>
+    </div>
+</div>
+
+<!-- Modal Konfirmasi Logout -->
+<div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow rounded-4 p-2">
+            <div class="modal-body text-center py-4">
+                <div class="mb-3">
+                    <div class="bg-danger bg-opacity-10 text-danger rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                        <i class="bi bi-box-arrow-right fs-2"></i>
+                    </div>
+                </div>
+                <h5 class="fw-bold text-dark mb-2" id="logoutModalLabel">Konfirmasi Logout</h5>
+                <p class="text-muted mb-4 fs-6">Apakah kamu yakin ingin keluar dari aplikasi POS ini?</p>
+                
+                <div class="d-flex gap-2 justify-content-center">
+                    <button type="button" class="btn btn-light px-4 rounded-3 fw-semibold" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary px-4 rounded-3 fw-semibold" id="confirmLogoutBtn">Ya, Keluar</button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -122,5 +144,15 @@ document.addEventListener('DOMContentLoaded', function () {
     window.addEventListener('resize', function () {
         if (window.innerWidth >= 992) closeSidebar();
     });
+
+    // Konfirmasi Logout Script
+    const confirmLogoutBtn = document.getElementById('confirmLogoutBtn');
+    const logoutForm = document.getElementById('logoutForm');
+
+    if (confirmLogoutBtn && logoutForm) {
+        confirmLogoutBtn.addEventListener('click', function () {
+            logoutForm.submit();
+        });
+    }
 });
 </script>

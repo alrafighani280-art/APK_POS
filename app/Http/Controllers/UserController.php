@@ -62,12 +62,7 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(User $user)
-    {
-        $user->delete();
-
-        return back()->with('success', 'User delate');
-    }
+   
 
     /**
      * Show the form for editing the specified resource.
@@ -96,7 +91,19 @@ class UserController extends Controller
 
         $user->save();
 
-        return redirect()->route('admin.users.edit', $user->id)->with('success', 'User update');
+        return redirect()->route('admin.users', $user->id)->with('success', 'User update');
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+       /**
+     * Display the specified resource.
+     */
+    public function show(User $user)
+    {
+        // Diubah: Hapus perintah $user->delete() bawaan sebelumnya agar tidak sengaja menghapus data saat melihat detail
+        return view('users.show', compact('user')); 
     }
 
     /**
@@ -104,8 +111,14 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
+    
+        if ($user->penjualan()->exists()) {
+            return back()->with('error', 'User "' . $user->name . '" tidak bisa dihapus karena memiliki riwayat transaksi.');
+        }
+
         $user->delete();
 
-        return back()->with('success', 'User deleted');
+        return back()->with('success', 'User berhasil dihapus.');
     }
+
 }

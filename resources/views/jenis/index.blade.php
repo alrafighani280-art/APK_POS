@@ -8,7 +8,7 @@
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2>Daftar Jenis Produk</h2>
-        <a href="{{ route('jenis.create') }}" class="btn btn-primary">+ Tambah Jenis</a>
+        <a href="{{ route('jenis.create') }}" class="btn btn-primary" style="background-color: #0B6477; border-color: #0B6477;">+ Tambah Jenis</a>
     </div>
 
     <table class="table table-bordered table-striped">

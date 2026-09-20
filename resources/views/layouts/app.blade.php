@@ -2,14 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <!-- Isi title yang kita kirimkan dari views lain-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title')</title>
-    <!-- memanggil Link bootstraps--> 
-     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body>
 
-<div class="container">
+<div class="container-fluid px-3 px-lg-4 py-3 py-md-4">
 
     @if(session('success'))
         <div class="alert alert-success">
@@ -17,8 +16,7 @@
         </div>
     @endif
 
-    <!-- Isi konten yang kita kirimkan dari views lain-->
-     @yield('content')
+    @yield('content')
 
 </div>
 

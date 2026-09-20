@@ -1,84 +1,197 @@
+/* ==========================================================================
+   1. GLOBAL & BASE STYLES
+   ========================================================================== */
+:root {
+    --primary-color: #0d6efd;
+    --success-color: #198754;
+    --danger-color: #dc3545;
+    --body-bg: #f8f9fa;
+    --text-color: #334155;
+    --sidebar-width: 260px;
+}
+
 body {
-        background-color: #f8f9fa;
-    }
-    .stat-card {
-        border: none;
-        border-radius: 12px;
-        transition: transform 0.2s, box-shadow 0.2s;
-    }
-    .stat-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.08) !important;
-    }
-    .icon-box {
-        width: 48px;
-        height: 48px;
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.25rem;
-    }
-    .table-custom th {
-        background-color: #f8f9fa;
-        font-weight: 600;
-        text-transform: uppercase;
-        font-size: 0.75rem;
-        letter-spacing: 0.5px;
-        color: #6c757d;
-    }
-     /* ===== Topbar khusus mobile ===== */
-    .topbar-mobile {
-        display: none;
-    }
+    background-color: var(--body-bg);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: var(--text-color);
+}
 
-    /* ===== Sidebar default (mobile: tersembunyi di luar layar) ===== */
+/* Tracking & Typography Helpers */
+.tracking-wide {
+    letter-spacing: 0.05em;
+}
+
+.empty-state {
+    padding: 1.25rem 1rem;
+}
+
+/* Utility Helpers */
+.qris-hidden {
+    display: none !important;
+}
+
+/* ==========================================================================
+   2. SIDEBAR & TOPBAR RESPONSIVE LAYOUT
+   ========================================================================== */
+.topbar-mobile {
+    display: none;
+}
+
+.sidebar-desktop {
+    width: var(--sidebar-width);
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    z-index: 1045;
+}
+
+.sidebar-desktop.show {
+    transform: translateX(0);
+}
+
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1040;
+}
+
+.sidebar-overlay.show {
+    display: block;
+}
+
+/* Breakpoint Desktop (>= 992px) */
+@media (min-width: 992px) {
+    body {
+        padding-left: var(--sidebar-width);
+    }
     .sidebar-desktop {
-        width: 260px;
-        transform: translateX(-100%);
-        transition: transform 0.3s ease;
-        z-index: 1045;
-    }
-
-    .sidebar-desktop.show {
         transform: translateX(0);
     }
-
-    /* ===== Overlay saat sidebar mobile terbuka ===== */
-    .sidebar-overlay {
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.5);
-        z-index: 1040;
-    }
-
-    .sidebar-overlay.show {
-        display: block;
-    }
-
-    /* ===== Desktop: sidebar selalu terlihat, konten digeser ===== */
-    @media (min-width: 992px) {
-        body {
-            padding-left: 260px;
-        }
-        .sidebar-desktop {
-            transform: translateX(0);
-        }
-        .topbar-mobile {
-            display: none !important;
-        }
-    }
-
-    /* ===== Mobile: tampilkan topbar dengan tombol hamburger ===== */
-    @media (max-width: 991.98px) {
-        .topbar-mobile {
-            display: flex;
-        }
-        body {
-            padding-top: 56px;
-        }
-    }
-    .qris-hidden {
+    .topbar-mobile {
         display: none !important;
     }
+}
+
+/* Breakpoint Mobile (< 992px) */
+@media (max-width: 991.98px) {
+    .topbar-mobile {
+        display: flex;
+    }
+    body {
+        padding-top: 56px;
+    }
+}
+
+/* ==========================================================================
+   3. COMPONENTS, CARDS & STATISTIK
+   ========================================================================== */
+.stat-card {
+    border: 1px solid rgba(226, 232, 240, 0.8) !important;
+    border-radius: 12px;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.08) !important;
+}
+
+.icon-box,
+.icon-shape {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+
+.product-avatar {
+    width: 36px;
+    height: 36px;
+    font-size: 0.95rem;
+    flex-shrink: 0;
+}
+
+/* POS Specific Cards */
+.card-total-box {
+    background-color: #f8f9fa;
+    border-left: 4px solid var(--success-color);
+}
+
+/* Form Controls Focus */
+.form-control:focus, 
+.form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.btn-outline-primary {
+    border-width: 1.5px;
+}
+
+/* ==========================================================================
+   4. TABLES & BADGES
+   ========================================================================== */
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.table {
+    white-space: nowrap;
+}
+
+.table-custom-header th,
+.table-custom th,
+.table thead th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+    color: #6c757d;
+    border-bottom: 1px solid #edf2f7;
+}
+
+.table tbody tr {
+    transition: background-color 0.15s ease;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f8fafc;
+}
+
+/* ==========================================================================
+   5. ANIMATIONS & RESPONSIVE ADJUSTMENTS
+   ========================================================================== */
+.dashboard-wrapper {
+    animation: fadeInUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 575.98px) {
+    .stat-card h4 {
+        font-size: 1.2rem !important;
+    }
+    
+    .icon-box,
+    .icon-shape {
+        width: 42px;
+        height: 42px;
+        font-size: 1.1rem;
+    }
+}

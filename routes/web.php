@@ -10,6 +10,8 @@ use App\Http\Controllers\JenisController;
 use App\Http\Controllers\TentangController;
 use App\Http\Controllers\UserController;
 
+Route::get('/', [TentangController::class, 'index']);
+
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'index'])->name('login');
     Route::post('/auth', [AuthController::class, 'auth'])->name('auth');
@@ -20,14 +22,16 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     Route::middleware('role:admin')->group(function () {
-        Route::resource('jenis', JenisController::class);
+        Route::resource('jenis', JenisController::class)->parameters([
+            'jenis' => 'jenis'
+        ]);
 
         Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('/users', [UserController::class, 'index'])->name('users');
             Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
             Route::post('/users', [UserController::class, 'store'])->name('users.store');
             Route::get('/users/edit/{user}', [UserController::class, 'edit'])->name('users.edit');
-            Route::post('/users/{user}', [UserController::class, 'update'])->name('users.update');
+            Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
             Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
         });
     });
@@ -38,5 +42,4 @@ Route::middleware('auth')->group(function () {
         Route::resource('itempenjualan', ItemPenjualanController::class);
 
     });
-    Route::get('/', [TentangController::class, 'index']);
 });

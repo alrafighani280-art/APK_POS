@@ -93,9 +93,9 @@
 
                     <!-- Tombol Create Penjualan Baru (Kanan) -->
                     <div class="col-12 col-md-auto text-md-end">
-                        <a href="{{ route('penjualan.create') }}" class="btn btn-primary fw-semibold px-3 py-2 rounded-3 d-inline-flex align-items-center gap-2">
+                        <a href="{{ route('penjualan.create') }}" class="btn btn-primary fw-semibold px-3 py-2 rounded-3 d-inline-flex align-items-center gap-2" style="background-color: #0B6477; border-color: #0B6477;">
                             <i class="bi bi-plus-lg"></i>
-                            <span>Create Transaksi</span>
+                            <span>Buat Transaksi</span>
                         </a>
                     </div>
 
