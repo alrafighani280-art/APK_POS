@@ -73,8 +73,10 @@
                             <th scope="col">Nama Jenis</th>
                             <th scope="col">Nama Produk</th>
                             <th scope="col">User/Inputor</th>
-                            <th scope="col">Harga Pokok</th>
-                            <th scope="col">Harga Jual</th>
+                            <th scope="col">Harga Pokok Satuan</th>
+                            <th scope="col">Harga Pokok pack</th>
+                            <th scope="col">Harga Jual Satuan</th>
+                            <th scope="col">Harga Jual Pack</th>
                             <th scope="col">Stok</th>
                             <th scope="col" class="text-end pe-4" style="width: 180px;">Aksi</th>
                         </tr>
@@ -121,12 +123,18 @@
 
                                 <!-- Harga Beli -->
                                 <td class="text-muted small">
-                                    Rp {{ number_format($product->harga_beli, 0, ',', '.') }}
+                                    Rp {{ number_format($product->harga_beli_satuan, 0, ',', '.') }}
+                                </td>
+                                <td class="text-muted small">
+                                    Rp {{ number_format($product->harga_beli_pack, 0, ',', '.') }}
                                 </td>
 
                                 <!-- Harga Jual -->
                                 <td class="fw-bold text-dark">
-                                    Rp {{ number_format($product->harga_jual, 0, ',', '.') }}
+                                    Rp {{ number_format($product->harga_jual_satuan, 0, ',', '.') }}
+                                </td>
+                                <td class="fw-bold text-dark">
+                                    Rp {{ number_format($product->harga_jual_pack, 0, ',', '.') }}
                                 </td>
 
                                 <!-- Stok -->

@@ -34,81 +34,102 @@
 
         <hr class="text-muted opacity-25 my-4">
 
-        {{-- Section Input Data Produk --}}
-        <div class="row g-3">
-            <div class="col-md-6">
-                <label class="form-label fw-semibold">Nama Produk</label>
-                <input type="text" name="name" class="form-control @error('name') is-invalid @enderror"
-                    placeholder="Masukkan nama produk" value="{{ old('name', $produk->nama ?? '') }}">
-                @error('name')
-                    <div class="invalid-feedback">
-                        {{ $message }}
-                    </div>
-                @enderror
-            </div>
-
-            <div class="col-md-6">
-                <label class="form-label fw-semibold">Jenis / Kategori Produk</label>
-                <select name="nama_jenis" class="form-select @error('nama_jenis') is-invalid @enderror">
-                    <option value="">-- Pilih Jenis --</option>
-                    @foreach ($jenisList as $jenis)
-                        <option value="{{ $jenis->id }}" @selected(old('nama_jenis', $produk->jenis_id ?? '') == $jenis->id)>
-                            {{ ucfirst($jenis->nama_jenis) }}
-                        </option>
-                    @endforeach
-                </select>
-                @error('nama_jenis')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
-
-            <div class="col-md-4">
-                <label class="form-label fw-semibold">Harga Pokok (Beli)</label>
-                <div class="input-group">
-                    <span class="input-group-text bg-light">Rp</span>
-                    <input type="number" name="purchase_price" class="form-control @error('purchase_price') is-invalid @enderror"
-                        placeholder="0" value="{{ old('purchase_price', $produk->harga_beli ?? '') }}">
-                </div>
-                @error('purchase_price')
-                    <div class="invalid-feedback d-block">
-                        {{ $message }}
-                    </div>
-                @enderror
-            </div>
-
-            <div class="col-md-4">
-                <label class="form-label fw-semibold">Harga Jual</label>
-                <div class="input-group">
-                    <span class="input-group-text bg-light">Rp</span>
-                    <input type="number" name="selling_price" class="form-control @error('selling_price') is-invalid @enderror"
-                        placeholder="0" value="{{ old('selling_price', $produk->harga_jual ?? '') }}">
-                </div>
-                @error('selling_price')
-                    <div class="invalid-feedback d-block">
-                        {{ $message }}
-                    </div>
-                @enderror
-            </div>
-
-            <div class="col-md-4">
-                <label class="form-label fw-semibold">Stok Produk</label>
-                <input type="number" name="stock" class="form-control @error('stock') is-invalid @enderror"
-                    placeholder="0" value="{{ old('stock', $produk->stok ?? '') }}">
-                @error('stock')
-                    <div class="invalid-feedback">
-                        {{ $message }}
-                    </div>
-                @enderror
-            </div>
+    {{-- Section Input Data Produk --}}
+    <div class="row g-3">
+        <div class="col-md-6">
+            <label class="form-label fw-semibold">Nama Produk</label>
+            <input type="text" name="nama" class="form-control @error('nama') is-invalid @enderror"
+                placeholder="Masukkan nama produk" value="{{ old('nama', $produk->nama ?? '') }}">
+            @error('nama')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
         </div>
 
-        {{-- Action Buttons --}}
+        <div class="col-md-6">
+            <label class="form-label fw-semibold">Jenis / Kategori Produk</label>
+            <select name="jenis_id" class="form-select @error('jenis_id') is-invalid @enderror">
+                <option value="">-- Pilih Jenis --</option>
+                @foreach ($jenisList as $jenis)
+                    <option value="{{ $jenis->id }}" @selected(old('jenis_id', $produk->jenis_id ?? '') == $jenis->id)>
+                        {{ ucfirst($jenis->nama_jenis) }}
+                    </option>
+                @endforeach
+            </select>
+            @error('jenis_id')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+
+        {{-- Harga Beli Satuan --}}
+        <div class="col-md-3">
+            <label class="form-label fw-semibold">Harga Pokok Satuan (Beli)</label>
+            <div class="input-group">
+                <span class="input-group-text bg-light">Rp</span>
+                <input type="number" name="harga_beli_satuan" class="form-control @error('harga_beli_satuan') is-invalid @enderror"
+                    placeholder="0" value="{{ old('harga_beli_satuan', $produk->harga_beli_satuan ?? '') }}">
+            </div>
+            @error('harga_beli_satuan')
+                <div class="invalid-feedback d-block">{{ $message }}</div>
+            @enderror
+        </div>
+
+        {{-- Harga Beli Pack --}}
+        <div class="col-md-3">
+            <label class="form-label fw-semibold">Harga Pokok Pack (Beli)</label>
+            <div class="input-group">
+                <span class="input-group-text bg-light">Rp</span>
+                <input type="number" name="harga_beli_pack" class="form-control @error('harga_beli_pack') is-invalid @enderror"
+                    placeholder="0" value="{{ old('harga_beli_pack', $produk->harga_beli_pack ?? '') }}">
+            </div>
+            @error('harga_beli_pack')
+                <div class="invalid-feedback d-block">{{ $message }}</div>
+            @enderror
+        </div>
+
+        {{-- Harga Jual Satuan --}}
+        <div class="col-md-3">
+            <label class="form-label fw-semibold">Harga Jual Satuan</label>
+            <div class="input-group">
+                <span class="input-group-text bg-light">Rp</span>
+                <input type="number" name="harga_jual_satuan" class="form-control @error('harga_jual_satuan') is-invalid @enderror"
+                    placeholder="0" value="{{ old('harga_jual_satuan', $produk->harga_jual_satuan ?? '') }}">
+            </div>
+            @error('harga_jual_satuan')
+                <div class="invalid-feedback d-block">{{ $message }}</div>
+            @enderror
+        </div>
+
+    {{-- Harga Jual Pack --}}
+    <div class="col-md-3">
+        <label class="form-label fw-semibold">Harga Jual Pack</label>
+        <div class="input-group">
+            <span class="input-group-text bg-light">Rp</span>
+            <input type="number" name="harga_jual_pack" class="form-control @error('harga_jual_pack') is-invalid @enderror"
+                placeholder="0" value="{{ old('harga_jual_pack', $produk->harga_jual_pack ?? '') }}">
+        </div>
+        @error('harga_jual_pack')
+            <div class="invalid-feedback d-block">{{ $message }}</div>
+        @enderror
+    </div>
+
+    {{-- Stok --}}
+    <div class="col-md-12">
+        <label class="form-label fw-semibold">Stok Produk</label>
+        <input type="number" name="stok" class="form-control @error('stok') is-invalid @enderror"
+            placeholder="0" value="{{ old('stok', $produk->stok ?? '') }}">
+        @error('stok')
+            <div class="invalid-feedback">{{ $message }}</div>
+        @enderror
+    </div>
+
+      {{-- Action Buttons --}}
         <div class="d-flex justify-content-end gap-2 mt-4 pt-2 border-top">
             <a href="{{ route('produk.index') }}" class="btn btn-light border px-4 fw-medium">Kembali</a>
             <button class="btn btn-primary px-4 fw-semibold" type="submit">
                 <i class="bi bi-save me-1"></i> Simpan
             </button>
         </div>
+</div>
 
     </div>
 </div>
@@ -191,3 +212,4 @@ function compressImage(file, maxWidth = 800, quality = 0.7) {
     });
 }
 </script>
+

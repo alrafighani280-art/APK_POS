@@ -17,17 +17,21 @@ class ProdukFactory extends Factory
      *
      * @return array<string, mixed>
      */
-    public function definition(): array
+   public function definition(): array
     {
-        $hargaBeli = $this->faker->numberBetween(10_000, 500_000);
+        $hargaBeliSatuan = $this->faker->numberBetween(10_000, 100_000);
+        $hargaBeliPack = $hargaBeliSatuan * 10;
+
         return [
-            'user_id' => User::where('role_id',1)->inRandomOrder()->value('id'),
+            'user_id' => User::where('role_id', 1)->inRandomOrder()->value('id') ?? User::factory(),
             'jenis_id' => Jenis::inRandomOrder()->value('id') ?? Jenis::factory(),
-            'foto' =>'produk' . $this->faker->uuid . 'jpg',
+            'foto' => 'produk/' . $this->faker->uuid() . '.jpg',
             'nama' => $this->faker->words(3, true),
-            'harga_beli' => $hargaBeli,
-            'harga_jual' => $hargaBeli + $this->faker->numberBetween(5_000, 100_0000),
-            'stok' => $this->faker->numberBetween(1, 500)
+            'harga_beli_satuan' => $hargaBeliSatuan,
+            'harga_beli_pack' => $hargaBeliPack,
+            'harga_jual_satuan' => $hargaBeliSatuan + $this->faker->numberBetween(1_000, 10_000),
+            'harga_jual_pack' => $hargaBeliPack + $this->faker->numberBetween(10_000, 50_000),
+            'stok' => $this->faker->numberBetween(1, 500),
         ];
     }
 }

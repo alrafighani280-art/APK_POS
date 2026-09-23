@@ -52,20 +52,12 @@ class ProdukController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreRequest $request)
+   public function store(StoreRequest $request)
     {
         $this->authorize('create', Produk::class);
 
-        $dataReq = $request->validated();
-
-        $data = [
-            'user_id'    => Auth::id(),
-            'jenis_id'   => $dataReq['nama_jenis'],
-            'nama'       => $dataReq['name'],
-            'harga_beli' => $dataReq['purchase_price'],
-            'harga_jual' => $dataReq['selling_price'],
-            'stok'       => $dataReq['stock'] ?? 0,
-        ];
+        $data = $request->validated();
+        $data['user_id'] = Auth::id();
 
         if ($request->hasFile('foto')) {
             $data['foto'] = $request->file('foto')->store('products', 'public');
@@ -93,7 +85,6 @@ class ProdukController extends Controller
     {
         $this->authorize('update', $produk);
 
-        // Ambil data jenis untuk dropdown
         $jenisList = Jenis::all();
 
         return view('produk.edit', compact('produk', 'jenisList'));
@@ -106,26 +97,13 @@ class ProdukController extends Controller
     {
         $this->authorize('update', $produk);
 
-        $dataReq = $request->validated();
+        $data = $request->validated();
 
-        $data = [
-            'user_id'    => Auth::id(),
-            'jenis_id'   => $dataReq['nama_jenis'],
-            'nama'       => $dataReq['name'],
-            'harga_beli' => $dataReq['purchase_price'],
-            'harga_jual' => $dataReq['selling_price'],
-            'stok'       => $dataReq['stock'] ?? 0,
-        ];
-
-        // Jika user meng-upload foto baru
         if ($request->hasFile('foto')) {
-
-            // 1. Hapus foto lama dari storage jika ada
             if ($produk->foto && Storage::disk('public')->exists($produk->foto)) {
                 Storage::disk('public')->delete($produk->foto);
             }
 
-            // 2. Simpan foto baru menggunakan fitur native Laravel (tanpa library eksternal)
             $data['foto'] = $request->file('foto')->store('products', 'public');
         }
 
@@ -134,7 +112,6 @@ class ProdukController extends Controller
         return redirect()->route('produk.index')
             ->with('success', 'Produk berhasil diperbarui.');
     }
-
     /**
      * Remove the specified resource from storage.
      */

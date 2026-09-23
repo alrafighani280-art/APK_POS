@@ -14,8 +14,10 @@ class Produk extends Model
         'jenis_id',
         'foto',
         'nama',
-        'harga_beli',
-        'harga_jual',
+        'harga_beli_satuan',
+        'harga_beli_pack',
+        'harga_jual_satuan',
+        'harga_jual_pack',
         'stok'
     ];
 

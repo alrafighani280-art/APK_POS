@@ -17,8 +17,10 @@ return new class extends Migration
             $table->foreignId('jenis_id')->constrined('jenis', 'id');
             $table->string('foto');
             $table->string('nama');
-            $table->integer('harga_beli');
-            $table->integer('harga_jual');
+            $table->integer('harga_beli_satuan');
+            $table->integer('harga_beli_pack');
+            $table->integer('harga_jual_satuan');
+            $table->integer('harga_jual_pack');
             $table->integer('stok');
             $table->index('nama');
             $table->timestamps();

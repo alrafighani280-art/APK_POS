@@ -9,13 +9,15 @@ class ItemPenjualan extends Model
 {
     use HasFactory;
 
-    protected $table = 'item_penjualan';
-    protected $fillable = [
+     protected $table = 'item_penjualan';
+
+   protected $fillable = [
         'penjualan_id',
         'produk_id',
+        'tipe_satuan',
         'kuantitas',
-        'harga_satuan',
-        'subtotal'
+        'harga_satuan', // Ganti 'harga' menjadi 'harga_satuan'
+        'subtotal',
     ];
 
     public function produk()

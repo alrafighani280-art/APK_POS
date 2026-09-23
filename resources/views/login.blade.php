@@ -132,7 +132,7 @@
         
         <div class="card login-card p-4">
             <div class="card-body p-2">
-                <div class="text-center mb-4">````
+                <div class="text-center mb-4">
                     <div class="login-brand-icon mb-3">
                         <i class="bi bi-basket2-fill fs-3"></i>
                     </div>
